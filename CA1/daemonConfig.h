@@ -5,3 +5,9 @@
 #define TRANSFER_HR 1
 #define TRANSFER_MIN 0
 #define TRANSFER_SEC 0
+
+//upload directory
+
+//reporting directory
+
+//backup directory

@@ -1,0 +1,11 @@
+Creating daemon
+Creating daemon
+Creating daemon
+Creating daemon
+Saving to file
+Saving to file
+Saving to file
+Saving to file
+Saving to file
+File open succeeded
+Saving to file

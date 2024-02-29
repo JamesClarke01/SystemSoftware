@@ -8,6 +8,9 @@
 
 void createChildProcess();
 void initDaemon();
+void handleSignal(int signo);
+void transfer();
+void debugLog(char* logString);
 
 int main() {
     time_t now;
@@ -16,14 +19,41 @@ int main() {
 
     while(1) {        
         sleep(1);
+
+
+    }
+}
+
+void debugLog(char* logString) {
+    FILE *fp = fopen("log.txt", "a");
+
+    fprintf(fp, "%s\n", logString);
+}
+
+void handleSignal(int signo) {
+    if(signo == SIGUSR1) {
+        debugLog("Beginning transfer process...\n");
     }
 }
 
 void initDaemon() {
     int i;
-    pid_t sid;
-    
-    createChildProcess(); //fork to create child process
+    pid_t pid, sid;
+    FILE *fp;
+
+    //fork to create child process
+    pid = fork();  //fork to create child process
+
+    //Check if forking suceeded
+    if (pid < 0) { 
+        perror("Error forking process");
+        exit(EXIT_FAILURE);
+    }
+
+    //Exit parent process (child process ID will be 0)
+    if (pid > 0) {
+        exit(EXIT_SUCCESS);
+    }
 
     //Create a new SID for the child process
     sid = setsid();
@@ -32,7 +62,29 @@ void initDaemon() {
         exit(EXIT_FAILURE);
     }
 
-    createChildProcess();  //fork a second time to ensure the process isn't a session leader
+    //Fork a second time to ensure the process isn't a session leader
+    pid = fork();
+
+    //Check if forking suceeded
+    if (pid < 0) { 
+        perror("Error forking process");
+        exit(EXIT_FAILURE);
+    }
+
+    //Exit parent process (child process ID will be 0)
+    if (pid > 0) {
+        debugLog("Saving to file");
+        //save PID to file
+        fp = fopen("//home/SystemSoftware/CA1/daemon.pid", "w");
+        if(fp != NULL) {
+            debugLog("File open succeeded");
+            fprintf(fp, "%d", pid);
+            fclose(fp);
+        } 
+
+        exit(EXIT_SUCCESS);
+    }
+
 
     umask(0); //Set file mode creation mask to 0
 
@@ -45,20 +97,7 @@ void initDaemon() {
     for(i = sysconf(_SC_OPEN_MAX); i >= 0; i--){
         close(i);
     }
-}
-
-
-void createChildProcess() {
-    pid_t pid = fork();  //fork to create child process
-
-    //Check if forking suceeded
-    if (pid < 0) { 
-        perror("Error forking process");
-        exit(EXIT_FAILURE);
-    }
-
-    //Exit parent process (child process ID will be 0)
-    if (pid > 0) {
-        exit(EXIT_SUCCESS);
-    }
+    
+    // Set up signal handling
+    signal(SIGUSR1, handleSignal);
 }
