@@ -76,7 +76,7 @@ void initDaemon() {
     if (pid > 0) {
         debugLog("Saving to file");
         //save PID to file
-        fp = fopen("//home/SystemSoftware/CA1/daemon.pid", "w");
+        fp = fopen("facDaemon.pid", "w");
         if(fp != NULL) {
             debugLog("File open succeeded");
             fprintf(fp, "%d", pid);
