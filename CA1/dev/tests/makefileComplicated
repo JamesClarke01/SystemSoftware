@@ -1,0 +1,17 @@
+CC = gcc
+
+SRCS = makeTest.clean
+HEADERS = test.h
+
+makeTest: $(SRCS) $(HEADERS)
+	$(CC) -o makeTest $(SRCS)
+
+run: makeTest
+	./makeTest
+
+clean:
+	rm makeTest
+
+all: makeTest run
+
+.PHONY: run clean
