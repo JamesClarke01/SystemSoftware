@@ -1,11 +1,25 @@
 #!/bin/bash
 
-if [ "$#" -lt 1 ]; then
-    echo "Invalid number of arguments"
-    exit 1
-fi
+stopDaemon() {
+    if [ -e "facDaemon.pid" ]; then
+        echo "Stopping daemon"
+        cat facDaemon.pid | xargs kill -TERM
 
-if [ "$1" = "start" ]; then
+        echo "Removing pid file"
+        rm -f facDaemon.pid
+
+        echo "Daemon is now stopped"
+    else 
+        echo "Daemon not currently running"
+    fi
+}
+
+startDaemon() {
+    #Stop daemon if already running
+    
+    stopDaemon
+    
+
     echo "Making daemon" 
     make  
 
@@ -14,10 +28,28 @@ if [ "$1" = "start" ]; then
 
     echo "Cleaning executable"
     rm -f facDaemon
-elif [ "$1" = "stop" ]; then    
-    echo "Stopping daemon"
-    cat facDaemon.pid | xargs kill -TERM
+    
+    echo "Daemon is now started"
+}
 
-    echo "Removing pid file"
-    rm -f facDaemon.pid
+getDaemonStatus() {
+    if [ -e "facDaemon.pid" ]; then
+        echo "Daemon is running"
+    else 
+        echo "Deamon is not running"
+    fi
+}
+
+if [ "$#" -lt 1 ]; then
+    echo "Invalid number of arguments"
+    exit 1
+fi
+
+#TODO: Add status command
+if [ "$1" = "start" ]; then
+    startDaemon
+elif [ "$1" = "stop" ]; then    
+    stopDaemon
+elif [ "$1" = "status" ]; then
+    getDaemonStatus
 fi
