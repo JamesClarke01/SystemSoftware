@@ -19,7 +19,6 @@ startDaemon() {
     
     stopDaemon
     
-
     echo "Making daemon" 
     make  
 
@@ -40,12 +39,11 @@ getDaemonStatus() {
     fi
 }
 
-if [ "$#" -lt 1 ]; then
+if [ "$#" -lt 2 ]; then
     echo "Invalid number of arguments"
     exit 1
 fi
 
-#TODO: Add status command
 if [ "$1" = "start" ]; then
     startDaemon
 elif [ "$1" = "stop" ]; then    
@@ -53,3 +51,7 @@ elif [ "$1" = "stop" ]; then
 elif [ "$1" = "status" ]; then
     getDaemonStatus
 fi
+
+
+
+
