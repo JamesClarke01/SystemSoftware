@@ -36,6 +36,7 @@ void handleSignal(int signo) {
     }
 }
 
+/*
 void initDaemon() {
     int i;
     pid_t pid, sid;
@@ -100,4 +101,4 @@ void initDaemon() {
     
     // Set up signal handling
     signal(SIGUSR1, handleSignal);
-}
+}*/
