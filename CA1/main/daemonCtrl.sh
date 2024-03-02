@@ -39,6 +39,14 @@ getDaemonStatus() {
     fi
 }
 
+sendTransferSignal() {
+    kill -SIGUSR1 $(cat facDaemon.pid)
+}
+
+sendBackupSignal() {
+    kill -SIGUSR2 $(cat facDaemon.pid)
+}
+
 if [ "$#" -lt 1 ]; then
     echo "Invalid number of arguments"
     exit 1
@@ -50,6 +58,10 @@ elif [ "$1" = "stop" ]; then
     stopDaemon
 elif [ "$1" = "status" ]; then
     getDaemonStatus
+elif [ "$1" = "transfer" ]; then
+    sendTransferSignal
+elif [ "$1" = "backup" ]; then
+    sendBackupSignal
 fi
 
 

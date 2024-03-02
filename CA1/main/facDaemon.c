@@ -6,6 +6,8 @@
 #include <sys/stat.h>
 #include <time.h>
 #include "daemonConfig.h"
+#include <fcntl.h>
+#include <string.h>
 
 void initDaemon();
 void handleSignal(int signo);
@@ -23,28 +25,37 @@ int main() {
 }
 
 void debugLog(char* logString) {
-    FILE *fp = fopen("debugLog.txt", "a");
+    int fd = open("//home/SystemSoftware/CA1/main/debugLog.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
     time_t currentTime = time(NULL);
 
     struct tm *timeStruct = localtime(&currentTime);
 
-    char timeBuffer[20];  //yyyy-mm-dd hh:mm:ss\0
+    char timeBuffer[22];  //yyyy-mm-dd hh:mm:ss\0
+    char logBuffer[100];
+    
     strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %X", timeStruct);
 
-    fprintf(fp, "[%s] %s\n", timeBuffer, logString);
+    sprintf(logBuffer, "[%s] %s\n", timeBuffer, logString);
+
+    
+    write(fd, logBuffer, 23 + strlen(logString));
+    close(fd);
 }
 
 void handleSignal(int signo) {
-    if(signo == SIGUSR1) {
-        debugLog("Beginning transfer process...\n");
+    if (signo == SIGUSR1) { 
+        debugLog("Transfering");
+    } else if (signo == SIGUSR2) {
+        debugLog("Backing up");
     }
 }
-
 
 void initDaemon() {
     int i;
     pid_t pid, sid;
     FILE *fp;
+    
+    debugLog("Starting Daemon");
 
     //fork to create child process
     pid = fork();  //fork to create child process
@@ -78,11 +89,10 @@ void initDaemon() {
 
     //Exit parent process (child process ID will be 0)
     if (pid > 0) {
-        debugLog("Saving to file");
+
         //save PID to file
         fp = fopen("facDaemon.pid", "w");
         if(fp != NULL) {
-            debugLog("File open succeeded");
             fprintf(fp, "%d", pid);
             fclose(fp);
         } 
@@ -104,5 +114,8 @@ void initDaemon() {
     }
     
     // Set up signal handling
-    signal(SIGUSR1, handleSignal);
+    signal(SIGUSR1, handleSignal); //for transfer
+    signal(SIGUSR2, handleSignal); //for backup
+
+    debugLog("Daemon Started");
 }
