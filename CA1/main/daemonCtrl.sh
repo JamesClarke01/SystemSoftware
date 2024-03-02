@@ -39,7 +39,7 @@ getDaemonStatus() {
     fi
 }
 
-if [ "$#" -lt 2 ]; then
+if [ "$#" -lt 1 ]; then
     echo "Invalid number of arguments"
     exit 1
 fi

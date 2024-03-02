@@ -4,9 +4,9 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <time.h>
 #include "daemonConfig.h"
 
-void createChildProcess();
 void initDaemon();
 void handleSignal(int signo);
 void transfer();
@@ -19,15 +19,19 @@ int main() {
 
     while(1) {        
         sleep(1);
-
-
     }
 }
 
 void debugLog(char* logString) {
-    FILE *fp = fopen("log.txt", "a");
+    FILE *fp = fopen("debugLog.txt", "a");
+    time_t currentTime = time(NULL);
 
-    fprintf(fp, "%s\n", logString);
+    struct tm *timeStruct = localtime(&currentTime);
+
+    char timeBuffer[20];  //yyyy-mm-dd hh:mm:ss\0
+    strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %X", timeStruct);
+
+    fprintf(fp, "[%s] %s\n", timeBuffer, logString);
 }
 
 void handleSignal(int signo) {
