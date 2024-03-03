@@ -1,3 +1,4 @@
+//Times
 #define UPLOAD_HOUR 23
 #define UPLOAD_MIN 30
 #define UPLOAD_SEC 0
@@ -6,8 +7,17 @@
 #define TRANSFER_MIN 0
 #define TRANSFER_SEC 0
 
-//upload directory
+//Reports
+#define FILE_NAME_MAX_LEN 50
+#define REPORT_SIZE 1024
+#define DISTRIBUTION_REPORT "Distribution.xml"
+#define MANUFACTURING_REPORT "Manufacturing.xml"
+#define SALES_REPORT "Sales.xml"
+#define WAREHOUSE_REPORT "Warehouse.xml"
 
-//reporting directory
+//Directory Paths
+#define UPLOAD_DIR "//home/SystemSoftware/CA1/main/upload"
+#define REPORT_DIR "//home/SystemSoftware/CA1/main/reporting"
+
 
 //backup directory

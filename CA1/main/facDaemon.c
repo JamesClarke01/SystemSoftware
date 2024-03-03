@@ -11,12 +11,13 @@
 
 void initDaemon();
 void handleSignal(int signo);
-void transfer();
+int transferAllReports();
+int transferReport(char* reportName);
 void debugLog(char* logString);
 
 int main() {
     time_t now;
-    
+
     initDaemon();
 
     while(1) {        
@@ -36,7 +37,6 @@ void debugLog(char* logString) {
     strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %X", timeStruct);
 
     sprintf(logBuffer, "[%s] %s\n", timeBuffer, logString);
-
     
     write(fd, logBuffer, 23 + strlen(logString));
     close(fd);
@@ -44,10 +44,61 @@ void debugLog(char* logString) {
 
 void handleSignal(int signo) {
     if (signo == SIGUSR1) { 
-        debugLog("Transfering");
+        transferAllReports();
     } else if (signo == SIGUSR2) {
         debugLog("Backing up");
     }
+}
+
+int transferAllReports() {
+    debugLog("Transfering");
+    
+    transferReport(DISTRIBUTION_REPORT);
+    transferReport(MANUFACTURING_REPORT);
+    transferReport(SALES_REPORT);
+    transferReport(WAREHOUSE_REPORT);
+}
+
+int transferReport(char* reportName) {
+    FILE *sourceFile, *destinationFile;
+    char buffer[REPORT_SIZE];
+    size_t bytesRead;
+    char uploadPath[strlen(UPLOAD_DIR) + FILE_NAME_MAX_LEN];  
+    char reportPath[strlen(REPORT_DIR) + FILE_NAME_MAX_LEN]; 
+
+    strcpy(uploadPath, UPLOAD_DIR);
+    strcat(uploadPath, "/");
+    strcat(uploadPath, reportName);
+
+    strcpy(reportPath, REPORT_DIR);
+    strcat(reportPath, "/");
+    strcat(reportPath, reportName);
+    
+    
+    // Open the source file for reading
+    sourceFile = fopen(uploadPath, "rb");
+    if (sourceFile == NULL) {
+        perror("Error opening source file");
+        return 1;
+    }
+
+    // Open the destination file for writing
+    destinationFile = fopen(reportPath, "wb");
+    if (destinationFile == NULL) {
+        perror("Error opening destination file");
+        fclose(sourceFile);
+        return 1;
+    }
+
+    // Copy the contents of the source file to the destination file
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), sourceFile)) > 0) {
+        fwrite(buffer, 1, bytesRead, destinationFile);
+    }
+
+    // Close the files
+    fclose(sourceFile);
+    fclose(destinationFile);
+    return 0;
 }
 
 void initDaemon() {

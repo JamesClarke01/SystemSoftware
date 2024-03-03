@@ -23,3 +23,110 @@
 [2024-03-02 21:35:23] Program Start.
 [2024-03-02 21:35:23] Starting Daemon
 [2024-03-02 21:35:23] Daemon Started
+[2024-03-03 12:39:57] Starting Daemon
+[2024-03-03 12:39:58] Daemon Started
+[2024-03-03 12:40:16] Transfering
+[2024-03-03 12:41:14] Starting Daemon
+[2024-03-03 12:41:14] Daemon Started
+[2024-03-03 12:41:15] Transfering
+[2024-03-03 14:56:41] Starting Daemon
+[2024-03-03 14:56:41] Daemon Started
+[2024-03-03 14:56:53] Starting Daemon
+[2024-03-03 14:56:53] Daemon Started
+[2024-03-03 14:57:04] Starting Daemon
+[2024-03-03 14:57:04] Daemon Started
+[2024-03-03 14:57:09] Starting Daemon
+[2024-03-03 14:57:09] Daemon Started
+[2024-03-03 14:57:24] Starting Daemon
+[2024-03-03 14:57:24] Daemon Started
+[2024-03-03 14:57:29] Starting Daemon
+[2024-03-03 14:57:29] Daemon Started
+[2024-03-03 15:00:33] Starting Daemon
+[2024-03-03 15:00:33] Daemon Started
+[2024-03-03 15:01:01] Starting Daemon
+[2024-03-03 15:01:01] Daemon Started
+[2024-03-03 15:01:06] Transfering
+[2024-03-03 15:01:06] 
+[2024-03-03 15:01:18] Starting Daemon
+[2024-03-03 15:01:18] Daemon Started
+[2024-03-03 15:01:20] Transfering
+[2024-03-03 15:01:20] 
+[2024-03-03 15:01:39] Starting Daemon
+[2024-03-03 15:01:40] Daemon Started
+[2024-03-03 15:01:50] Transfering
+[2024-03-03 15:01:50] 
+[2024-03-03 15:03:56] Starting Daemon
+[2024-03-03 15:03:56] Daemon Started
+[2024-03-03 15:06:27] Starting Daemon
+[2024-03-03 15:06:27] Daemon Started
+[2024-03-03 15:06:28] Transfering
+[2024-03-03 15:06:28] 55
+[2024-03-03 15:07:21] Starting Daemon
+[2024-03-03 15:07:22] Daemon Started
+[2024-03-03 15:07:23] Transfering
+[2024-03-03 15:07:23] 55
+[2024-03-03 15:07:28] Transfering
+[2024-03-03 15:07:28] 55
+[2024-03-03 15:07:44] Starting Daemon
+[2024-03-03 15:07:44] Daemon Started
+[2024-03-03 15:13:50] Starting Daemon
+[2024-03-03 15:13:50] Daemon Started
+[2024-03-03 15:13:51] Transfering
+[2024-03-03 15:17:23] Starting Daemon
+[2024-03-03 15:17:23] Daemon Started
+[2024-03-03 15:17:25] Transfering
+[2024-03-03 15:17:36] Starting Daemon
+[2024-03-03 15:17:36] Daemon Started
+[2024-03-03 15:17:40] Transfering
+[2024-03-03 15:17:55] Starting Daemon
+[2024-03-03 15:17:55] Daemon Started
+[2024-03-03 15:17:56] Transfering
+[2024-03-03 15:20:12] Starting Daemon
+[2024-03-03 15:20:12] Daemon Started
+[2024-03-03 15:20:13] Transfering
+[2024-03-03 15:20:13] //home/SystemSoftware/CA1/main/upload/Distribution.xml
+[2024-03-03 15:22:54] Starting Daemon
+[2024-03-03 15:22:55] Daemon Started
+[2024-03-03 15:23:02] Transfering
+[2024-03-03 15:25:21] Starting Daemon
+[2024-03-03 15:25:21] Daemon Started
+[2024-03-03 15:25:23] Transfering
+[2024-03-03 15:25:31] Transfering
+[2024-03-03 15:25:38] Starting Daemon
+[2024-03-03 15:25:38] Daemon Started
+[2024-03-03 15:25:39] Transfering
+[2024-03-03 15:26:07] Starting Daemon
+[2024-03-03 15:26:07] Daemon Started
+[2024-03-03 15:26:09] Transfering
+[2024-03-03 15:26:09] ðh!
+[2024-03-03 15:28:27] Transfering
+[2024-03-03 15:28:27] ðh!
+[2024-03-03 15:28:30] Starting Daemon
+[2024-03-03 15:28:30] Daemon Started
+[2024-03-03 15:28:32] Transfering
+[2024-03-03 15:28:32] //home/SystemSoftware/CA1/main/reporting/Distribution.xml
+[2024-03-03 16:05:59] Starting Daemon
+[2024-03-03 16:05:59] Daemon Started
+[2024-03-03 16:14:24] Starting Daemon
+[2024-03-03 16:14:24] Daemon Started
+[2024-03-03 16:14:57] Starting Daemon
+[2024-03-03 16:14:57] Daemon Started
+[2024-03-03 16:15:03] Transfering
+[2024-03-03 16:15:11] Transfering
+[2024-03-03 16:18:40] Transfering
+[2024-03-03 16:18:41] Starting Daemon
+[2024-03-03 16:18:41] Daemon Started
+[2024-03-03 16:18:43] Transfering
+[2024-03-03 16:18:43] //home/SystemSoftware/CA1/main/reportingDistribution.xml
+[2024-03-03 16:18:43] //home/SystemSoftware/CA1/main/uploadDistribution.xml
+[2024-03-03 16:19:58] Starting Daemon
+[2024-03-03 16:19:58] Daemon Started
+[2024-03-03 16:20:02] Transfering
+[2024-03-03 16:20:02] //home/SystemSoftware/CA1/main/reporting/Distribution.xml
+[2024-03-03 16:20:02] //home/SystemSoftware/CA1/main/upload/Distribution.xml
+[2024-03-03 16:23:48] Starting Daemon
+[2024-03-03 16:23:49] Daemon Started
+[2024-03-03 16:23:54] Transfering
+[2024-03-03 16:24:11] Starting Daemon
+[2024-03-03 16:24:11] Daemon Started
+[2024-03-03 16:24:12] Transfering
