@@ -18,6 +18,4 @@
 //Directory Paths
 #define UPLOAD_DIR "//home/SystemSoftware/CA1/main/upload"
 #define REPORT_DIR "//home/SystemSoftware/CA1/main/reporting"
-
-
-//backup directory
+//TODO backup directory

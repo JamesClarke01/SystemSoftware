@@ -9,21 +9,44 @@
 #include <fcntl.h>
 #include <string.h>
 
+#define SECS_IN_DAY 86400
+
 void initDaemon();
 void handleSignal(int signo);
+void advanceDay(struct tm* timeStruct);
+
 int transferAllReports();
 int transferReport(char* reportName);
+
+
 void debugLog(char* logString);
+void debugLogInt(int number);
 
 int main() {
-    time_t now;
+    time_t now, transferTime;
+    struct tm timeStruct;
+    time(&now);
+    timeStruct = *localtime(&now);
+
+    timeStruct.tm_hour = TRANSFER_HR;
+    timeStruct.tm_min = TRANSFER_MIN;
+    timeStruct.tm_sec = TRANSFER_SEC;
+    transferTime = mktime(&timeStruct);
 
     initDaemon();
 
     while(1) {        
         sleep(1);
+        time(&now);
+        debugLogInt(difftime(transferTime, now));
+        if(difftime(transferTime, now) == 0) {
+            transferAllReports();
+            transferTime += SECS_IN_DAY; //advance transfer time by 1 day
+        }
     }
 }
+
+
 
 void debugLog(char* logString) {
     int fd = open("//home/SystemSoftware/CA1/main/debugLog.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
@@ -40,6 +63,13 @@ void debugLog(char* logString) {
     
     write(fd, logBuffer, 23 + strlen(logString));
     close(fd);
+}
+
+void debugLogInt(int number) {
+    char buffer[10];
+
+    sprintf(buffer, "%d", number);
+    debugLog(buffer);
 }
 
 void handleSignal(int signo) {
@@ -72,17 +102,16 @@ int transferReport(char* reportName) {
 
     strcpy(reportPath, REPORT_DIR);
     strcat(reportPath, "/");
-    strcat(reportPath, reportName);
+    strcat(reportPath, reportName);    
     
-    
-    // Open the source file for reading
+    //Open the source file for reading
     sourceFile = fopen(uploadPath, "rb");
     if (sourceFile == NULL) {
         perror("Error opening source file");
         return 1;
     }
 
-    // Open the destination file for writing
+    //Open the destination file for writing
     destinationFile = fopen(reportPath, "wb");
     if (destinationFile == NULL) {
         perror("Error opening destination file");
@@ -90,14 +119,18 @@ int transferReport(char* reportName) {
         return 1;
     }
 
-    // Copy the contents of the source file to the destination file
+    //Copy the contents of the source file to the destination file
     while ((bytesRead = fread(buffer, 1, sizeof(buffer), sourceFile)) > 0) {
         fwrite(buffer, 1, bytesRead, destinationFile);
     }
 
-    // Close the files
+    //Close the files
     fclose(sourceFile);
     fclose(destinationFile);
+
+    //Delete the file in the upload directory
+    remove(uploadPath);
+
     return 0;
 }
 
