@@ -18,6 +18,8 @@ void advanceDay(struct tm* timeStruct);
 int transferAllReports();
 int transferReport(char* reportName);
 
+int lockDir(const char* dirPath);
+int unlockDir(const char* dirPath);
 
 void debugLog(char* logString);
 void debugLogInt(int number);
@@ -33,6 +35,8 @@ int main() {
     timeStruct.tm_sec = TRANSFER_SEC;
     transferTime = mktime(&timeStruct);
 
+    unlockDir(UPLOAD_DIR);
+
     initDaemon();
 
     while(1) {        
@@ -40,13 +44,13 @@ int main() {
         time(&now);
         debugLogInt(difftime(transferTime, now));
         if(difftime(transferTime, now) == 0) {
+            lockDir(UPLOAD_DIR);
             transferAllReports();
+            unlockDir(UPLOAD_DIR);
             transferTime += SECS_IN_DAY; //advance transfer time by 1 day
         }
     }
 }
-
-
 
 void debugLog(char* logString) {
     int fd = open("//home/SystemSoftware/CA1/main/debugLog.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
@@ -79,6 +83,29 @@ void handleSignal(int signo) {
         debugLog("Backing up");
     }
 }
+
+int lockDir(const char* dirPath) {
+
+    mode_t readOnlyPermissions = 0444;
+
+    if (chmod(dirPath, readOnlyPermissions) == 0) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+int unlockDir(const char* dirPath) {
+
+    mode_t readWritePermissions = 0666;
+
+    if (chmod(dirPath, readWritePermissions) == 0) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
 
 int transferAllReports() {
     debugLog("Transfering");
