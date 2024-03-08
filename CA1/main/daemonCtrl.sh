@@ -26,7 +26,7 @@ startDaemon() {
     ./facDaemon  
 
     echo "Cleaning executable"
-    rm -f facDaemon
+    make clean
     
     echo "Daemon is now started"
 }

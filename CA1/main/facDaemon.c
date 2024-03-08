@@ -5,9 +5,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
-#include "daemonConfig.h"
 #include <fcntl.h>
 #include <string.h>
+
+#include "daemonConfig.h"
+#include "logger.h"
 
 #define SECS_IN_DAY 86400
 
@@ -15,14 +17,12 @@ void initDaemon();
 void handleSignal(int signo);
 void advanceDay(struct tm* timeStruct);
 
-int transferAllReports();
-int transferReport(char* reportName);
+int moveAllReports(char* sourceDir, char* targetDir);
+int moveReport(char* sourceDir, char* targetDir, char* reportName);
 
 int lockDir(const char* dirPath);
 int unlockDir(const char* dirPath);
 
-void debugLog(char* logString);
-void debugLogInt(int number);
 
 int main() {
     time_t now, transferTime;
@@ -33,54 +33,30 @@ int main() {
     timeStruct.tm_hour = TRANSFER_HR;
     timeStruct.tm_min = TRANSFER_MIN;
     timeStruct.tm_sec = TRANSFER_SEC;
-    transferTime = mktime(&timeStruct);
-
-    unlockDir(UPLOAD_DIR);
+    transferTime = mktime(&timeStruct);    
 
     initDaemon();
 
     while(1) {        
         sleep(1);
         time(&now);
-        debugLogInt(difftime(transferTime, now));
+        
         if(difftime(transferTime, now) == 0) {
-            lockDir(UPLOAD_DIR);
-            transferAllReports();
+            
+            moveAllReports(UPLOAD_DIR, REPORT_DIR);
             unlockDir(UPLOAD_DIR);
             transferTime += SECS_IN_DAY; //advance transfer time by 1 day
         }
     }
 }
 
-void debugLog(char* logString) {
-    int fd = open("//home/SystemSoftware/CA1/main/debugLog.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
-    time_t currentTime = time(NULL);
-
-    struct tm *timeStruct = localtime(&currentTime);
-
-    char timeBuffer[22];  //yyyy-mm-dd hh:mm:ss\0
-    char logBuffer[100];
-    
-    strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %X", timeStruct);
-
-    sprintf(logBuffer, "[%s] %s\n", timeBuffer, logString);
-    
-    write(fd, logBuffer, 23 + strlen(logString));
-    close(fd);
-}
-
-void debugLogInt(int number) {
-    char buffer[10];
-
-    sprintf(buffer, "%d", number);
-    debugLog(buffer);
-}
-
 void handleSignal(int signo) {
-    if (signo == SIGUSR1) { 
-        transferAllReports();
+    if (signo == SIGUSR1) {     
+        moveAllReports(UPLOAD_DIR, REPORT_DIR);
+        debugLog("Transferred files from upload to reporting.");
     } else if (signo == SIGUSR2) {
-        debugLog("Backing up");
+        moveAllReports(REPORT_DIR, BACKUP_DIR);
+        debugLog("Backed up files.");
     }
 }
 
@@ -107,39 +83,41 @@ int unlockDir(const char* dirPath) {
 }
 
 
-int transferAllReports() {
-    debugLog("Transfering");
-    
-    transferReport(DISTRIBUTION_REPORT);
-    transferReport(MANUFACTURING_REPORT);
-    transferReport(SALES_REPORT);
-    transferReport(WAREHOUSE_REPORT);
+int moveAllReports(char* sourceDir, char* targetDir) {    
+    lockDir(sourceDir);
+    lockDir(targetDir);
+    moveReport(sourceDir, targetDir, DISTRIBUTION_REPORT);
+    moveReport(sourceDir, targetDir, MANUFACTURING_REPORT);
+    moveReport(sourceDir, targetDir, SALES_REPORT);
+    moveReport(sourceDir, targetDir, WAREHOUSE_REPORT);
+    unlockDir(sourceDir);
+    unlockDir(targetDir);
 }
 
-int transferReport(char* reportName) {
+int moveReport(char* sourceDir, char* targetDir, char* reportName) {
     FILE *sourceFile, *destinationFile;
     char buffer[REPORT_SIZE];
     size_t bytesRead;
-    char uploadPath[strlen(UPLOAD_DIR) + FILE_NAME_MAX_LEN];  
-    char reportPath[strlen(REPORT_DIR) + FILE_NAME_MAX_LEN]; 
+    char sourcePath[strlen(sourceDir) + FILE_NAME_MAX_LEN];  
+    char targetPath[strlen(targetDir) + FILE_NAME_MAX_LEN]; 
 
-    strcpy(uploadPath, UPLOAD_DIR);
-    strcat(uploadPath, "/");
-    strcat(uploadPath, reportName);
+    strcpy(sourcePath, sourceDir);
+    strcat(sourcePath, "/");
+    strcat(sourcePath, reportName);
 
-    strcpy(reportPath, REPORT_DIR);
-    strcat(reportPath, "/");
-    strcat(reportPath, reportName);    
+    strcpy(targetPath, targetDir);
+    strcat(targetPath, "/");
+    strcat(targetPath, reportName);    
     
     //Open the source file for reading
-    sourceFile = fopen(uploadPath, "rb");
+    sourceFile = fopen(sourcePath, "rb");
     if (sourceFile == NULL) {
         perror("Error opening source file");
         return 1;
     }
 
     //Open the destination file for writing
-    destinationFile = fopen(reportPath, "wb");
+    destinationFile = fopen(targetPath, "wb");
     if (destinationFile == NULL) {
         perror("Error opening destination file");
         fclose(sourceFile);
@@ -154,9 +132,8 @@ int transferReport(char* reportName) {
     //Close the files
     fclose(sourceFile);
     fclose(destinationFile);
-
-    //Delete the file in the upload directory
-    remove(uploadPath);
+    
+    remove(sourcePath);
 
     return 0;
 }
@@ -210,7 +187,6 @@ void initDaemon() {
 
         exit(EXIT_SUCCESS);
     }
-
 
     umask(0); //Set file mode creation mask to 0
 
