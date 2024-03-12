@@ -7,6 +7,8 @@
         "limits.h": "c",
         "stdio.h": "c",
         "typeinfo": "c",
-        "daemonconfig.h": "c"
+        "daemonconfig.h": "c",
+        "logger.h": "c",
+        "filetransfer.h": "c"
     }
 }

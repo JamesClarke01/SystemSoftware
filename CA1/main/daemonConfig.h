@@ -3,8 +3,8 @@
 #define UPLOAD_MIN 30
 #define UPLOAD_SEC 0
 
-#define TRANSFER_HR 12
-#define TRANSFER_MIN 25
+#define TRANSFER_HR 1
+#define TRANSFER_MIN 0
 #define TRANSFER_SEC 0
 
 //Reports
