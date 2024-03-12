@@ -28,7 +28,7 @@ int main() {
     while(1) {                
         sleep(1);        
         
-        transferIfTime(&transferTime);
+        transferAndBackupIfTime(&transferTime);
 
         checkDirForChanges(inotify_fd);
     }
@@ -39,7 +39,7 @@ void handleSignal(int signo) {
         moveAllReports(UPLOAD_DIR, REPORT_DIR);
         debugLog("Transferred files from upload to reporting.");
     } else if (signo == SIGUSR2) {
-        moveAllReports(REPORT_DIR, BACKUP_DIR);
+        backupFiles(REPORT_DIR, BACKUP_DIR);
         debugLog("Backed up files.");
     }
 }

@@ -7,6 +7,7 @@
 #include <time.h>
 #include <fcntl.h>
 #include <string.h>
+#include <dirent.h>
 
 #include "daemonConfig.h"
 #include "logger.h"
@@ -14,32 +15,90 @@
 
 #define SECS_IN_DAY 86400
 
+
+int backupFiles(char* sourceDir, char* targetDir) {
+    DIR* dir;
+    struct dirent* entry;
+    char sourcePath[strlen(sourceDir) + FILE_NAME_MAX_LEN];     
+    char targetPath[strlen(targetDir) + FILE_NAME_MAX_LEN];     
+
+    lockDir(sourceDir);
+    lockDir(targetDir);
+
+    dir = opendir(sourceDir);
+
+    if (!dir) {
+        debugLog("Error opening directory");
+        return 1;        
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        makePathStr(sourcePath, sourceDir, entry->d_name);
+        makePathStr(targetPath, targetDir, entry->d_name);
+        copyFile(sourcePath, targetPath);
+    }
+
+    unlockDir(sourceDir);
+    unlockDir(targetDir);
+
+    return 0;
+}
+
+
+void transferAndBackupIfTime(time_t* transferTime) {
+    time_t now;
+
+    time(&now);
+    
+    if(difftime(*transferTime, now) == 0) {            
+        moveAllReports(UPLOAD_DIR, REPORT_DIR);
+        backupFiles(REPORT_DIR, BACKUP_DIR);
+        *transferTime += SECS_IN_DAY; //advance transfer time by 1 day
+    }
+}
+
+void makePathStr(char* outputPath, char* dirPath, char* fileName) {
+    strcpy(outputPath, dirPath);
+    strcat(outputPath, "/");
+    strcat(outputPath, fileName);
+}
+
 int moveAllReports(char* sourceDir, char* targetDir) {    
     lockDir(sourceDir);
     lockDir(targetDir);
-    moveReport(sourceDir, targetDir, DISTRIBUTION_REPORT);
-    moveReport(sourceDir, targetDir, MANUFACTURING_REPORT);
-    moveReport(sourceDir, targetDir, SALES_REPORT);
-    moveReport(sourceDir, targetDir, WAREHOUSE_REPORT);
+    
+    char sourcePath[strlen(sourceDir) + FILE_NAME_MAX_LEN];     
+    char targetPath[strlen(targetDir) + FILE_NAME_MAX_LEN];     
+
+    makePathStr(sourcePath, sourceDir, DISTRIBUTION_REPORT); 
+    makePathStr(targetPath, targetDir, DISTRIBUTION_REPORT);
+    copyFile(sourcePath, targetPath);
+    remove(sourcePath);
+
+    makePathStr(sourcePath, sourceDir, MANUFACTURING_REPORT); 
+    makePathStr(targetPath, targetDir, MANUFACTURING_REPORT);
+    copyFile(sourcePath, targetPath);
+    remove(sourcePath);
+
+    makePathStr(sourcePath, sourceDir, SALES_REPORT); 
+    makePathStr(targetPath, targetDir, SALES_REPORT);
+    copyFile(sourcePath, targetPath);
+    remove(sourcePath);
+
+    makePathStr(sourcePath, sourceDir, WAREHOUSE_REPORT); 
+    makePathStr(targetPath, targetDir, WAREHOUSE_REPORT);
+    copyFile(sourcePath, targetPath);
+    remove(sourcePath);
+
     unlockDir(sourceDir);
     unlockDir(targetDir);
 }
 
-int moveReport(char* sourceDir, char* targetDir, char* reportName) {
+int copyFile(char* sourcePath, char* targetPath) {
     FILE *sourceFile, *destinationFile;
     char buffer[REPORT_SIZE];
     size_t bytesRead;
-    char sourcePath[strlen(sourceDir) + FILE_NAME_MAX_LEN];  
-    char targetPath[strlen(targetDir) + FILE_NAME_MAX_LEN]; 
-
-    strcpy(sourcePath, sourceDir);
-    strcat(sourcePath, "/");
-    strcat(sourcePath, reportName);
-
-    strcpy(targetPath, targetDir);
-    strcat(targetPath, "/");
-    strcat(targetPath, reportName);    
-    
+        
     //Open the source file for reading
     sourceFile = fopen(sourcePath, "rb");
     if (sourceFile == NULL) {
@@ -64,8 +123,6 @@ int moveReport(char* sourceDir, char* targetDir, char* reportName) {
     fclose(sourceFile);
     fclose(destinationFile);
     
-    remove(sourcePath);
-
     return 0;
 }
 
@@ -105,19 +162,3 @@ time_t getTransferTime() {
     return transferTime;    
 }
 
-void transferIfTime(time_t* transferTime) {
-    time_t now;
-
-    time(&now);
-    
-    if(difftime(*transferTime, now) == 0) {            
-        lockDir(UPLOAD_DIR);
-        lockDir(REPORT_DIR);
-        lockDir(BACKUP_DIR);
-        moveAllReports(UPLOAD_DIR, REPORT_DIR);
-        unlockDir(UPLOAD_DIR);
-        unlockDir(REPORT_DIR);
-        unlockDir(BACKUP_DIR);
-        *transferTime += SECS_IN_DAY; //advance transfer time by 1 day
-    }
-}
