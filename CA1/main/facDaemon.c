@@ -13,6 +13,8 @@
 
 #define SECS_IN_DAY 86400
 
+//Checking for file changes
+
 void initDaemon();
 void handleSignal(int signo);
 void advanceDay(struct tm* timeStruct);
@@ -23,8 +25,40 @@ int moveReport(char* sourceDir, char* targetDir, char* reportName);
 int lockDir(const char* dirPath);
 int unlockDir(const char* dirPath);
 
+//Time
+time_t getTransferTime();
+void transferIfTime(time_t* transferTime);
 
 int main() {
+    time_t transferTime;
+    
+    initDaemon();
+
+    transferTime = getTransferTime();
+    int inotify_fd = setupDirMonitoring();
+
+    while(1) {                
+        sleep(1);        
+        
+        transferIfTime(&transferTime);
+
+        checkDirForChanges(inotify_fd);
+    }
+}
+
+void transferIfTime(time_t* transferTime) {
+    time_t now;
+
+    time(&now);
+    
+    if(difftime(*transferTime, now) == 0) {            
+        moveAllReports(UPLOAD_DIR, REPORT_DIR);
+        unlockDir(UPLOAD_DIR);
+        *transferTime += SECS_IN_DAY; //advance transfer time by 1 day
+    }
+}
+
+time_t getTransferTime() {
     time_t now, transferTime;
     struct tm timeStruct;
     time(&now);
@@ -35,20 +69,9 @@ int main() {
     timeStruct.tm_sec = TRANSFER_SEC;
     transferTime = mktime(&timeStruct);    
 
-    initDaemon();
-
-    while(1) {        
-        sleep(1);
-        time(&now);
-        
-        if(difftime(transferTime, now) == 0) {
-            
-            moveAllReports(UPLOAD_DIR, REPORT_DIR);
-            unlockDir(UPLOAD_DIR);
-            transferTime += SECS_IN_DAY; //advance transfer time by 1 day
-        }
-    }
+    return transferTime;    
 }
+ 
 
 void handleSignal(int signo) {
     if (signo == SIGUSR1) {     

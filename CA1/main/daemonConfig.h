@@ -3,8 +3,8 @@
 #define UPLOAD_MIN 30
 #define UPLOAD_SEC 0
 
-#define TRANSFER_HR 1
-#define TRANSFER_MIN 0
+#define TRANSFER_HR 12
+#define TRANSFER_MIN 25
 #define TRANSFER_SEC 0
 
 //Reports
@@ -21,4 +21,7 @@
 #define BACKUP_DIR "//home/SystemSoftware/CA1/main/backup"
 
 //Logging
-#define LOG_DIR "//home/SystemSoftware/CA1/main/debugLog.txt"
+#define DEBUG_LOG_PATH "//home/SystemSoftware/CA1/main/debugLog.txt"
+#define FILE_LOG_PATH "//home/SystemSoftware/CA1/main/fileLog.txt"
+
+
