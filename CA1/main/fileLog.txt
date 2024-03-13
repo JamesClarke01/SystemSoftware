@@ -10,3 +10,14 @@ Filename: b 	Status: Created 	User: MrManufacture 	Time: 2024-03-12 17:35:02
 Filename: .b.swp 	Status: Created 	User: MrManufacture 	Time: 2024-03-12 17:35:29
 Filename: .b.swp 	Status: Modified 	User: MrManufacture 	Time: 2024-03-12 17:35:31
 Filename: 4913 	Status: Created 	User: MrManufaÕÚìçU 	Time: 2024-03-12 17:35:41
+Filename: blah 	Status: Created 	User: root 	Time: 2024-03-12 23:26:40
+Filename: Warehouse.xml 	Status: Modified 	User: root 	Time: 2024-03-12 23:27:05
+Filename: Warehouse.xml 	Status: Modified 	User: root 	Time: 2024-03-12 23:27:10
+Distribution report was not uploaded
+Distribution report was not uploaded
+Manufacturing report was not uploaded
+Sales report was not uploaded
+Warehouse report was not uploaded
+Warehouse report was not uploaded
+[2024-03-13 00:46:03] Warehouse report was not uploaded
+[2024-03-13 00:47:17] Warehouse report was not uploaded

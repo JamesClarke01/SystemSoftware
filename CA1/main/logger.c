@@ -8,6 +8,8 @@
 #include <pwd.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <stdbool.h>
+#include <dirent.h>
 #include "daemonConfig.h"
 #define EVENT_BUFFER_SIZE (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 
@@ -74,7 +76,7 @@ void logChanges(struct inotify_event *event) {
         strcpy(fileStatus, "Modified");
     }
 
-    sprintf(logBuffer, "Filename: %s \tStatus: %s \tUser: %s \tTime: %s\n", event->name, fileStatus, user, timeBuffer);
+    sprintf(logBuffer, "[%s] Filename: %s \tStatus: %s \tUser: %s\n", timeBuffer, event->name, fileStatus, user);
     logFile = fopen(FILE_LOG_PATH, "a");
     fwrite(logBuffer, 1,strlen(logBuffer), logFile);
     fclose(logFile);
@@ -101,9 +103,58 @@ int setupDirMonitoring() {
     return inotify_fd;
 }
 
+int checkIfReportsUploaded() {
+    FILE* logFile;
+    DIR* dir;
+    struct dirent* entry;
+    bool distribution = false;
+    bool manufacturing = false;
+    bool sales = false;
+    bool warehouse = false;
+    time_t currentTime = time(NULL);
+    struct tm *timeStruct = localtime(&currentTime);
+    char timeBuffer[22];
 
+    dir = opendir(UPLOAD_DIR);
 
-void checkDirForChanges(int inotify_fd) {
+    if (!dir) {
+        debugLog("Error opening directory");
+        return 1;        
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, DISTRIBUTION_REPORT) == 0) {
+            distribution = true;
+        } else if (strcmp(entry->d_name, MANUFACTURING_REPORT) == 0) {
+            manufacturing = true;
+        } else if (strcmp(entry->d_name, SALES_REPORT) == 0) {
+            sales = true;
+        } else if (strcmp(entry->d_name, WAREHOUSE_REPORT) == 0) {
+            warehouse = true;
+        }
+    }
+
+    logFile = fopen(FILE_LOG_PATH, "a");
+    strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %X", timeStruct);    
+
+    if(!distribution) {
+        fprintf(logFile, "[%s] Distribution report was not uploaded\n", timeBuffer);
+    }     
+    if (!manufacturing) {
+        fprintf(logFile, "[%s] Manufacturing report was not uploaded\n", timeBuffer);
+    }     
+    if (!sales) {
+        fprintf(logFile, "[%s] Sales report was not uploaded\n", timeBuffer);
+    }
+    if (!warehouse) {
+        fprintf(logFile, "[%s] Warehouse report was not uploaded\n", timeBuffer);
+    }
+
+    fclose(logFile);
+    return 0;
+}
+
+void checkUploadDirForChanges(int inotify_fd) {
     char event_buffer[EVENT_BUFFER_SIZE];    
     
     ssize_t len = read(inotify_fd, event_buffer, EVENT_BUFFER_SIZE);

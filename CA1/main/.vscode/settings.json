@@ -9,6 +9,11 @@
         "typeinfo": "c",
         "daemonconfig.h": "c",
         "logger.h": "c",
-        "filetransfer.h": "c"
+        "filetransfer.h": "c",
+        "types.h": "c",
+        "time.h": "c",
+        "string.h": "c",
+        "signal.h": "c",
+        "unistd.h": "c"
     }
 }

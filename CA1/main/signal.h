@@ -1,0 +1,1 @@
+void handleSignal(int signo);

@@ -1,5 +1,5 @@
 #Source files
-SRCS = facDaemon.c logger.c fileTransfer.c
+SRCS = daemonSetup.c facDaemon.c logger.c fileTransfer.c signal.c
 
 #Object files
 OBJS = $(SRCS:.c=.o)

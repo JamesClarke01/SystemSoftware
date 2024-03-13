@@ -13,9 +13,6 @@
 #include "logger.h"
 #include "fileTransfer.h"
 
-#define SECS_IN_DAY 86400
-
-
 int backupFiles(char* sourceDir, char* targetDir) {
     DIR* dir;
     struct dirent* entry;
@@ -44,18 +41,6 @@ int backupFiles(char* sourceDir, char* targetDir) {
     return 0;
 }
 
-
-void transferAndBackupIfTime(time_t* transferTime) {
-    time_t now;
-
-    time(&now);
-    
-    if(difftime(*transferTime, now) == 0) {            
-        moveAllReports(UPLOAD_DIR, REPORT_DIR);
-        backupFiles(REPORT_DIR, BACKUP_DIR);
-        *transferTime += SECS_IN_DAY; //advance transfer time by 1 day
-    }
-}
 
 void makePathStr(char* outputPath, char* dirPath, char* fileName) {
     strcpy(outputPath, dirPath);
@@ -148,17 +133,5 @@ int unlockDir(const char* dirPath) {
     }
 }
 
-time_t getTransferTime() {
-    time_t now, transferTime;
-    struct tm timeStruct;
-    time(&now);
-    timeStruct = *localtime(&now);
 
-    timeStruct.tm_hour = TRANSFER_HR;
-    timeStruct.tm_min = TRANSFER_MIN;
-    timeStruct.tm_sec = TRANSFER_SEC;
-    transferTime = mktime(&timeStruct);    
-
-    return transferTime;    
-}
 

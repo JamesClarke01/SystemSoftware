@@ -9,7 +9,7 @@ int lockDir(const char* dirPath);
 int unlockDir(const char* dirPath);
 
 time_t getTransferTime();
-time_t getBackupTime();
+
 void transferAndBackupIfTime(time_t* transferTime);
 
 void advanceDay(struct tm* timeStruct);
