@@ -41,10 +41,11 @@ time_t getUploadTime() {
     return transferTime;    
 }
 
-void initDaemon() {
+int initDaemon() {
     int i;
     pid_t pid, sid;
     FILE *fp;
+    char pidPath[100];
     
     debugLog("Starting Daemon");
 
@@ -53,7 +54,7 @@ void initDaemon() {
 
     //Check if forking suceeded
     if (pid < 0) { 
-        perror("Error forking process");
+        errorLog("Forking process");
         exit(EXIT_FAILURE);
     }
 
@@ -65,7 +66,7 @@ void initDaemon() {
     //Create a new SID for the child process
     sid = setsid();
     if (sid < 0 ) {
-        perror("Error creating new SID");
+        errorLog("Creating new SID");
         exit(EXIT_FAILURE);
     }
 
@@ -74,16 +75,18 @@ void initDaemon() {
 
     //Check if forking suceeded
     if (pid < 0) { 
-        perror("Error forking process");
+        errorLog("Error forking process");
         exit(EXIT_FAILURE);
     }
 
     //Exit parent process (child process ID will be 0)
-    if (pid > 0) {
+    if (pid > 0) {  
+        strcpy(pidPath, DAEMON_DIR);
+        strcat(pidPath, "/facDaemon.pid");
 
         //save PID to file
-        fp = fopen("facDaemon.pid", "w");
-        if(fp != NULL) {
+        fp = fopen(pidPath, "w");
+        if(fp != NULL) {            
             fprintf(fp, "%d", pid);
             fclose(fp);
         } 
@@ -95,6 +98,7 @@ void initDaemon() {
 
     //Change working directory to root
     if(chdir("/") < 0) {
+        errorLog("Changing directory");
         exit(EXIT_FAILURE);
     }
 
@@ -106,6 +110,8 @@ void initDaemon() {
     // Set up signal handling
     signal(SIGUSR1, handleSignal); //for transfer
     signal(SIGUSR2, handleSignal); //for backup
+    signal(SIGHUP, handleSignal); //for restarting
 
     debugLog("Daemon Started");
+    return 0;
 }

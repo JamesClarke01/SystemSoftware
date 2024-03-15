@@ -26,7 +26,7 @@ startDaemon() {
     ./facDaemon  
 
     echo "Cleaning executable"
-    make clean
+    make removeObjects
     
     echo "Daemon is now started"
 }
@@ -47,6 +47,10 @@ sendBackupSignal() {
     kill -SIGUSR2 $(cat facDaemon.pid)
 }
 
+sendRestartSignal() {
+    kill -SIGHUP $(cat facDaemon.pid)
+}
+
 if [ "$#" -lt 1 ]; then
     echo "Invalid number of arguments"
     exit 1
@@ -62,6 +66,8 @@ elif [ "$1" = "transfer" ]; then
     sendTransferSignal
 elif [ "$1" = "backup" ]; then
     sendBackupSignal
+elif [ "$1" = "restart" ]; then
+    sendRestartSignal
 fi
 
 

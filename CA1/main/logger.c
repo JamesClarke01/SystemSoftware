@@ -34,6 +34,15 @@ void debugLog(char* logString) {
     fclose(logFile);    
 }
 
+void errorLog(char* errorString) {
+    char logBuffer[100];
+
+    strcpy(logBuffer, "Error: ");
+    strcat(logBuffer, errorString); 
+    debugLog(logBuffer);   
+}
+
+
 void debugLogInt(int number) {
     char buffer[10];
 

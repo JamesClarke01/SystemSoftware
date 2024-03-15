@@ -19,7 +19,10 @@ int main() {
     time_t transferTime, uploadTime, now;
     int inotify_fd;
 
-    initDaemon();
+    if (initDaemon() == 1) {
+        errorLog("Starting Daemon");
+        return 1;
+    }
 
     transferTime = getTransferTime();
     uploadTime = getUploadTime();

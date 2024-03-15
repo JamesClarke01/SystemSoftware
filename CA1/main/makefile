@@ -12,5 +12,5 @@ $(TARGET): $(OBJS) #Link object files
 %.o: %.c #Compile all object files
 	gcc -c $< -o $@
 
-clean:
-	rm -f $(OBJS) $(TARGET)
+removeObjects:
+	rm -f $(OBJS)
