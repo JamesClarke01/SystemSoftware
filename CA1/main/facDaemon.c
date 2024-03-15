@@ -19,14 +19,13 @@ int main() {
     time_t transferTime, uploadTime, now;
     int inotify_fd;
 
-    if (initDaemon() == 1) {
+    if (initDaemon() != 0) {
         errorLog("Starting Daemon");
         return 1;
     }
 
     transferTime = getTransferTime();
-    uploadTime = getUploadTime();
-    
+    uploadTime = getUploadTime();    
     inotify_fd = setupDirMonitoring();
 
     while(1) {                
@@ -34,8 +33,14 @@ int main() {
         
         time(&now);                
         if(difftime(transferTime, now) == 0) {            
-            moveAllReports(UPLOAD_DIR, REPORT_DIR);
-            backupFiles(REPORT_DIR, BACKUP_DIR);
+            if(moveAllReports(UPLOAD_DIR, REPORT_DIR) != 0) {
+                errorLog("Transferring reports");
+            }
+            
+            if(backupFiles(REPORT_DIR, BACKUP_DIR) != 0) {
+                errorLog("Backing up files");
+            }
+
             transferTime += SECS_IN_DAY; 
         } else if(difftime(uploadTime, now) == 0) {            
             checkIfReportsUploaded();

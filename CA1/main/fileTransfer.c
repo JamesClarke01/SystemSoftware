@@ -25,7 +25,7 @@ int backupFiles(char* sourceDir, char* targetDir) {
     dir = opendir(sourceDir);
 
     if (!dir) {
-        debugLog("Error opening directory");
+        errorLog("Opening backup directory");
         return 1;        
     }
 
@@ -77,6 +77,7 @@ int moveAllReports(char* sourceDir, char* targetDir) {
 
     unlockDir(sourceDir);
     unlockDir(targetDir);
+    return 0;
 }
 
 int copyFile(char* sourcePath, char* targetPath) {
@@ -87,14 +88,14 @@ int copyFile(char* sourcePath, char* targetPath) {
     //Open the source file for reading
     sourceFile = fopen(sourcePath, "rb");
     if (sourceFile == NULL) {
-        perror("Error opening source file");
+        errorLog("Opening source file during copy");
         return 1;
     }
 
     //Open the destination file for writing
     destinationFile = fopen(targetPath, "wb");
     if (destinationFile == NULL) {
-        perror("Error opening destination file");
+        errorLog("Opening destination file during copy");
         fclose(sourceFile);
         return 1;
     }
